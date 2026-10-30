@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAZA AI LAB'S — Intelligence Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#070d19;color:#edf4ff;font-family:Arial,sans-serif}
+header{padding:20px 7%;border-bottom:1px solid #263750;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:bold;letter-spacing:2px;color:#67e8f9}
+.status{font-size:12px;color:#86efac}
+main{max-width:850px;margin:65px auto;padding:20px}
+.hero{text-align:center}
+h1{font-size:clamp(34px,6vw,58px);margin-bottom:15px}
+h1 span{color:#60a5fa}
+p{color:#9aaac2;line-height:1.7}
+.chat{margin-top:35px;background:#101d31;border:1px solid #2b4263;border-radius:18px;padding:16px}
+textarea{width:100%;min-height:100px;background:transparent;color:white;border:0;outline:0;resize:vertical;font-size:15px}
+button{background:#2563eb;color:white;border:0;padding:13px 20px;border-radius:10px;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5;cursor:wait}
+.actions{text-align:right}
+#reply{margin-top:25px;padding:20px;background:#101d31;border:1px solid #263750;border-radius:15px;white-space:pre-wrap;line-height:1.7;display:none}
+.studios{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:45px}
+.studio{padding:17px 10px;text-align:center;border:1px solid #263750;border-radius:12px;background:#101d31;color:#dceaff;font-size:12px;cursor:pointer}
+footer{text-align:center;color:#71839d;font-size:11px;padding:35px}
+@media(max-width:650px){.studios{grid-template-columns:repeat(2,1fr)}main{margin-top:35px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">FAZA AI LAB'S</div>
+<div class="status">● AI STUDIO</div>
+</header>
+<main>
+<section class="hero">
+<p>ONE AI · MANY EXPERTISES</p>
+<h1>Ide Besar Dimulai<br><span>Di Sini.</span></h1>
+<p>Partner AI untuk berkreasi, belajar, meriset, mendesain, dan menyelesaikan berbagai pekerjaan.</p>
+</section>
+
+<section class="chat">
+<textarea id="prompt" placeholder="Tulis pertanyaan atau ide yang ingin kamu kembangkan..."></textarea>
+<div class="actions">
+<button id="send" onclick="sendMessage()">Kirim ke FAZA ↗</button>
+</div>
+</section>
+
+<div id="reply"></div>
+
+<section class="studios">
+<div class="studio" onclick="choose('AI Assistant')">✦<br>AI Assistant</div>
+<div class="studio" onclick="choose('Creative & Content')">✎<br>Creative & Content</div>
+<div class="studio" onclick="choose('Education & Learning')">▤<br>Education & Learning</div>
+<div class="studio" onclick="choose('Design & Visual')">◈<br>Design & Visual</div>
+<div class="studio" onclick="choose('Filmmaking & Animation')">▶<br>Filmmaking</div>
+<div class="studio" onclick="choose('Research & Knowledge')">⌕<br>Research</div>
+<div class="studio" onclick="choose('Business & Productivity')">▦<br>Business</div>
+<div class="studio" onclick="choose('Technology & Coding')">&lt;/&gt;<br>Technology</div>
+</section>
+</main>
+<footer>FAZA AI LAB'S · INTELLIGENCE & CREATIVE STUDIO</footer>
+
+<script>
+function choose(name){
+document.getElementById('prompt').value='Saya ingin menggunakan '+name+'. Bantu saya.';
+document.getElementById('prompt').focus();
+}
+async function sendMessage(){
+const prompt=document.getElementById('prompt').value.trim();
+if(!prompt){alert('Silakan tulis pertanyaan terlebih dahulu.');return;}
+const button=document.getElementById('send');
+const reply=document.getElementById('reply');
+button.disabled=true;
+button.textContent='FAZA sedang berpikir...';
+reply.style.display='block';
+reply.textContent='Sedang menghubungkan ke mesin AI...';
+try{
+const response=await fetch('/api/chat',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({message:prompt})
+});
+const data=await response.json();
+if(!response.ok)throw new Error(data.error||'Terjadi kesalahan.');
+reply.textContent=data.reply||'Belum ada jawaban.';
+}catch(error){
+reply.textContent='Koneksi belum siap: '+error.message;
+}finally{
+button.disabled=false;
+button.textContent='Kirim ke FAZA ↗';
+}
+}
+</script>
+</body>
+</html>
